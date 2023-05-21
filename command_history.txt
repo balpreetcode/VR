@@ -1,0 +1,47 @@
+    1  git clone https://github.com/sanchit-gandhi/whisper-jax.git
+    2  cd whisper-jax
+    3  pip install -r requirements.txt
+    4  pip install numpy scipy jax jaxlib flax optax transformers
+    5  cd ..
+    6  git clone https://github.com/davabase/whisper_real_time.git
+    7  cd whisper_real_time/
+    8  pip install -r requirements.txt
+    9  sudo apt-get install -y portaudio19-dev
+   10  pip install pyaudio
+   11  pip install -r requirements.txt
+   12  python3.7 transcribe_demo.py
+   13  python  transcribe_demo.py
+   14  cd ..
+   15  git clone https://github.com/openai/whisper.git
+   16  cd whisper
+   17  pip install -U openai-whisper
+   18  pip install --upgrade --no-deps --force-reinstall git+https://github.com/openai/whisper.git
+   19  sudo apt update && sudo apt install ffmpeg
+   20  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+   21  pip install setuptools-rust
+   22  whisper audio.flac audio.mp3 audio.wav --model medium
+   23  audio.flac: No such file or directory
+   24  whisper audio.mp3 --model medium
+   25  mkdir whisper_api
+   26  cd whisper
+   27  cd ..
+   28  cd whisper_api/
+   29  touch app.py
+   30  mkdir uploads
+   31  python app.py
+   32  pip install flask flask-restful
+   33  python app.py
+   34  cd whisperX
+   35  sudo apt-get update
+   36  sudo apt-get install ffmpeg
+   37  ffmpeg -v
+   38  whisperx audio.mp3 --compute_type float32
+   39  cd ..
+   40  cd whisper-jax/
+   41  pip install git+https://github.com/deepmind/dm-haiku
+   42  pip install git+https://github.com/sanchit-gandhi/whisper-jax
+   43  pip install git+https://github.com/deepmind/optax
+   44  pip install -e .["endpoint"]
+   45  python app/app.py
+   46  history
+   47  history > command_history.txt

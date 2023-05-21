@@ -1,0 +1,76 @@
+To Dockerize this environment, you'll first need to create a Dockerfile. This file will include instructions on how to build a Docker image that encapsulates all of the requirements of your environment.
+
+Here's a simple Dockerfile to get you started:
+
+```dockerfile
+# Use an official Python runtime as a parent image
+FROM python:3.7-slim-buster
+
+# Update and install dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    ffmpeg \
+    portaudio19-dev \
+    curl \
+    build-essential
+
+# Install Rust
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Clone the whisper-jax repository
+RUN git clone https://github.com/sanchit-gandhi/whisper-jax.git
+WORKDIR /app/whisper-jax
+RUN pip install -r requirements.txt
+
+# Clone the whisper_real_time repository
+WORKDIR /app
+RUN git clone https://github.com/davabase/whisper_real_time.git
+WORKDIR /app/whisper_real_time/
+RUN pip install -r requirements.txt
+RUN pip install pyaudio
+
+# Clone whisper repository
+WORKDIR /app
+RUN git clone https://github.com/openai/whisper.git
+WORKDIR /app/whisper
+RUN pip install -U openai-whisper
+RUN pip install --upgrade --no-deps --force-reinstall git+https://github.com/openai/whisper.git
+
+# Setup whisper_api
+WORKDIR /app/whisper_api/
+RUN mkdir uploads
+RUN touch app.py
+RUN pip install flask flask-restful
+
+# Install whisper-jax dependencies
+WORKDIR /app/whisper-jax/
+RUN pip install git+https://github.com/deepmind/dm-haiku
+RUN pip install git+https://github.com/sanchit-gandhi/whisper-jax
+RUN pip install git+https://github.com/deepmind/optax
+RUN pip install -e .["endpoint"]
+
+# Run the app when the container launches
+CMD ["python", "app/app.py"]
+```
+
+Once you have the Dockerfile ready, you can build the Docker image by running:
+
+```bash
+docker build -t your-docker-image-name .
+```
+
+This will take a while, as it has to clone repositories, install packages, etc. When it's done, you can create a container from the image and run it with:
+
+```bash
+docker run -p 4000:4000 -t your-docker-image-name
+```
+
+Please modify the Dockerfile and docker run command according to your needs. For instance, if your flask application runs on a different port or if you need to expose more ports, add them in the docker run command. If you need more environment variables, you can use the ENV instruction in the Dockerfile or the -e option in the docker run command. 
+
+You also need to take care about the persistent storage for your uploads folder and how you are going to handle the command line scripts like 'whisper audio.mp3 --model medium' or 'whisperx audio.mp3 --compute_type float32' etc.
+
+Remember, Docker containers are ephemeral. Any data that your application creates inside the container will be lost when the container is stopped and removed, unless it's tied to a persistent storage like a Docker volume.
